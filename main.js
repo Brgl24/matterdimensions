@@ -3,7 +3,7 @@ var matter = 10;
 setInterval(function(){
     gameincrement()
     updateallhtml()
-}, 1000)
+}, 1000);
 
 class Maker {
     constructor(c) {
@@ -11,14 +11,15 @@ class Maker {
         this.amount = 0
         this.costmult = 1
         this.purchased = 1
+        this.truecost = 0
     }
 
     getCost() {
-        return this.cost * this.costmult
+        this.truecost = this.cost * this.costmult
     }
 
     purchaseIncrement() {
-        this.costmult = this.costmult + (0.1 + this.purchased/10);
+        this.costmult = this.costmult * 1.5;
         this.amount += 1;
         this.purchased += 1;
     }
@@ -31,11 +32,11 @@ for (i = 0; i < 9; i++) {
 
 function buymaker(x) {
     for (i = 0; i < 9; i++) {
-        if (i = (x - 1)) {
-            console.log("uh")
-            if(matter >= makers[i].getCost()) {
-                matter = matter - makers[i].getCost();
-                purchaseIncrement();
+        if (i == (x - 1)) {
+            if(matter >= makers[i].cost * makers[i].costmult) {
+                matter = matter - (makers[i].cost * makers[i].costmult);
+                makers[i].purchaseIncrement();
+                console.log("uh")
             }
         }
     }
@@ -55,9 +56,27 @@ function updateallhtml() {
     for (i = 0; i < 9; i++) {
         let idhelper = (i + 1);
         let tempcost = makers[i].cost * makers[i].costmult
-        document.getElementById("maker" + idhelper).innerHTML = "----- " + makers[i].amount + " T" + idhelper + " Makers Each Making 1 T" + idhelper + " Maker Per Second"; 
-        document.getElementById("buyMaker" + idhelper + "button").innerHTML = "Buy T" + idhelper + " Maker | Cost: " + tempcost + " Matter";
+        let precision1 = makers[i].amount
+        let precision2 = matter
+        let precision3 = tempcost
+        precision1 = makesmallnumbersprecise(precision1);
+        precision2 = makesmallnumbersprecise(precision2);
+        precision3 = makesmallnumbersprecise(precision3);
+        document.getElementById("maker" + idhelper).innerHTML = "----- " + precision1 + " T" + idhelper + " Makers Each Making 1 T" + idhelper + " Maker Per Second"; 
+        document.getElementById("buyMaker" + idhelper + "button").innerHTML = "Buy T" + idhelper + " Maker | Cost: " + precision3 + " Matter";
+        document.getElementById("matterpersecond").innerHTML = "@ " + makers[0].amount + " Matter Per Second";
+        document.getElementById("matter").innerHTML = precision2 + " Matter";
     } 
+}
+
+function makesmallnumbersprecise(precision) {
+    if (precision < 10) {
+        return precision = precision.toPrecision(1);
+    } else if (precision < 100 && precision >= 10) {
+        return precision = precision.toPrecision(2);
+    } else {
+        return precision = precision.toPrecision(3);
+    }
 }
 
 
